@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ayuda a las FACUs Públicas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;700&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f2ede6;
+      --red:   #d42b2b;
+      --gray:  #1c1c1c;
+      --mid:   #3a3a3a;
+      --paper: #e8e2d8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: .35;
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 3rem;
+      background: var(--black);
+      border-bottom: 2px solid var(--red);
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem; letter-spacing: .08em;
+      color: var(--white); text-decoration: none;
+    }
+    .logo span { color: var(--red); }
+
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a {
+      text-decoration: none; color: var(--white);
+      font-family: 'Oswald', sans-serif; font-size: .8rem;
+      font-weight: 500; letter-spacing: .15em; text-transform: uppercase;
+      transition: color .2s;
+    }
+    nav ul a:hover { color: var(--red); }
+
+    .nav-cta {
+      font-family: 'Oswald', sans-serif;
+      background: var(--red); color: var(--white) !important;
+      padding: .5rem 1.4rem; font-size: .8rem; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase;
+      text-decoration: none;
+      border: 2px solid var(--red);
+      transition: background .2s, color .2s;
+    }
+    .nav-cta:hover { background: transparent; color: var(--red) !important; }
+
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding-top: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      background: var(--paper);
+      color: var(--black);
+      padding: 5rem 3.5rem 4rem;
+      display: flex; flex-direction: column; justify-content: space-between;
+      position: relative;
+    }
+
+    .building { width: 100%; max-width: 320px; margin: 2rem auto; }
+    .building svg { width: 100%; height: auto; opacity: .7; filter: contrast(1.2); }
+
+    .hero-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 6vw, 6rem);
+      line-height: .95; letter-spacing: .02em; text-transform: uppercase;
+    }
+    .hero-headline .red { color: var(--red); }
+
+    .hero-sub {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 3.5vw, 3.5rem);
+      line-height: 1; letter-spacing: .02em; text-transform: uppercase;
+      margin-top: 1.5rem; color: var(--black);
+    }
+    .hero-sub .red { color: var(--red); }
+
+    .stats-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin-top: 2rem;
+    }
+    .stat-item {
+      display: flex; align-items: flex-start; gap: .5rem;
+      font-size: .78rem; font-weight: 600; line-height: 1.4; color: #2a2a2a;
+    }
+    .stat-icon { font-size: 1rem; flex-shrink: 0; margin-top: .05rem; }
+
+    .hero-right {
+      background: var(--black);
+      padding: 5rem 3.5rem 4rem;
+      display: flex; flex-direction: column; justify-content: center; gap: 2.5rem;
+      border-left: 3px solid var(--red);
+    }
+
+    .hero-right h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 3vw, 3.2rem);
+      letter-spacing: .06em; line-height: 1.05; text-transform: uppercase;
+    }
+    .hero-right h2 .red { color: var(--red); }
+
+    .hero-right p {
+      font-size: 1rem; font-weight: 300; line-height: 1.85;
+      color: #b0a898; max-width: 46ch;
+      border-left: 3px solid var(--red); padding-left: 1.2rem;
+    }
+
+    .qr-row { display: flex; align-items: center; gap: 2rem; }
+    .qr-box {
+      width: 100px; height: 100px;
+      background: var(--white); padding: 8px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .qr-box svg { width: 100%; height: 100%; }
+
+    .qr-labels { display: flex; flex-direction: column; gap: .5rem; }
+    .qr-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--white); display: flex; align-items: center; gap: .5rem;
+    }
+    .qr-label .icon { font-size: 1.2rem; }
+
+    .hero-quote {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: .1em;
+      color: var(--red); text-transform: uppercase;
+      border-top: 1px solid var(--mid); padding-top: 1.5rem;
+    }
+
+    .ticker { background: var(--red); padding: .6rem 0; overflow: hidden; }
+    .ticker-track { display: inline-block; animation: ticker 22s linear infinite; white-space: nowrap; }
+    .ticker-track span {
+      font-family: 'Oswald', sans-serif;
+      font-size: .75rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+      margin-right: 2.5rem; color: var(--white);
+    }
+    .ticker-track span::before { content: '✦  '; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    section { padding: 5.5rem 4rem; }
+    .section-tag {
+      font-family: 'Oswald', sans-serif;
+      font-size: .72rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--red); display: block; margin-bottom: .8rem;
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 4vw, 4.5rem);
+      letter-spacing: .04em; line-height: 1; text-transform: uppercase;
+    }
+
+    .how { background: var(--gray); border-top: 2px solid var(--red); border-bottom: 2px solid var(--red); }
+    .how-inner { display: grid; grid-template-columns: 1fr 2fr; gap: 5rem; align-items: start; }
+    .steps { display: flex; flex-direction: column; }
+    .step {
+      display: grid; grid-template-columns: 4rem 1fr; gap: 1.2rem; align-items: start;
+      padding: 1.8rem 0; border-bottom: 1px solid var(--mid);
+      opacity: 0; transform: translateX(20px);
+      transition: opacity .5s, transform .5s;
+    }
+    .step.visible { opacity: 1; transform: translateX(0); }
+    .step:last-child { border-bottom: none; }
+    .step-num { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--red); line-height: 1; }
+    .step h3 { font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .5rem; }
+    .step p { font-size: .875rem; font-weight: 300; color: #9a9080; line-height: 1.7; }
+
+    .materials { background: var(--black); }
+    .materials-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+      margin-top: 3rem; border: 1px solid var(--mid);
+    }
+    .mat-card {
+      padding: 2.2rem; border: 1px solid var(--mid);
+      display: flex; flex-direction: column; gap: .7rem;
+      opacity: 0; transform: translateY(15px);
+      transition: opacity .5s, transform .5s, background .2s;
+      position: relative; overflow: hidden;
+    }
+    .mat-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 0; background: var(--red);
+      transition: height .3s ease;
+    }
+    .mat-card:hover::before { height: 100%; }
+    .mat-card:hover { background: #111; }
+    .mat-card.visible { opacity: 1; transform: translateY(0); }
+    .mat-icon { font-size: 2rem; }
+    .mat-card h3 { font-family: 'Oswald', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .mat-card p { font-size: .85rem; font-weight: 300; color: #888070; line-height: 1.6; }
+    .mat-tag {
+      align-self: flex-start; margin-top: auto;
+      font-family: 'Oswald', sans-serif; font-size: .65rem; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase;
+      background: var(--red); color: var(--white); padding: .2rem .7rem;
+    }
+
+    .testimonials { background: var(--paper); color: var(--black); border-top: 3px solid var(--black); }
+    .testimonials .section-tag { color: var(--red); }
+    .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 3rem; background: var(--black); border: 1px solid var(--black); }
+    .testi-card { background: var(--paper); padding: 2.2rem; display: flex; flex-direction: column; gap: 1rem; transition: background .2s; }
+    .testi-card:hover { background: #ddd5c8; }
+    .testi-quote { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--red); line-height: 1; }
+    .testi-text { font-size: .95rem; font-weight: 300; line-height: 1.8; color: #333; }
+    .testi-name { font-family: 'Oswald', sans-serif; font-size: .85rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .testi-role { font-size: .78rem; color: #777; }
+
+    .universities { background: var(--gray); }
+    .uni-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1px; margin-top: 3rem; background: var(--mid); border: 1px solid var(--mid);
+    }
+    .uni-cell {
+      background: var(--gray); padding: 1rem 1.2rem;
+      font-family: 'Oswald', sans-serif; font-size: .8rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      transition: background .2s, color .2s; cursor: default;
+    }
+    .uni-cell:hover { background: var(--red); color: var(--white); }
+
+    .donate { background: var(--black); border-top: 3px solid var(--red); }
+    .donate-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .donate h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 5vw, 5.5rem); line-height: .95; letter-spacing: .03em; text-transform: uppercase; }
+    .donate h2 .red { color: var(--red); }
+    .donate .lead { font-size: 1rem; font-weight: 300; color: #9a9080; line-height: 1.8; margin-top: 1.5rem; border-left: 3px solid var(--red); padding-left: 1rem; }
+
+    .form-box { border: 2px solid var(--red); padding: 2.5rem; }
+    .form-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .05em; margin-bottom: 1.8rem; border-bottom: 1px solid var(--mid); padding-bottom: .8rem; }
+    .form-group { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1.2rem; }
+    .form-group label { font-family: 'Oswald', sans-serif; font-size: .7rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #888; }
+    .form-group input, .form-group select, .form-group textarea {
+      background: var(--gray); border: 1px solid var(--mid);
+      color: var(--white); padding: .75rem 1rem;
+      font-family: 'Source Sans 3', sans-serif; font-size: .95rem;
+      outline: none; transition: border-color .2s; resize: vertical;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--red); }
+    .form-group select option { background: var(--gray); }
+
+    .amount-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+    .amount-btn {
+      padding: .6rem .5rem; border: 1px solid var(--mid); background: transparent;
+      font-family: 'Oswald', sans-serif; font-size: .85rem; font-weight: 700;
+      color: var(--white); cursor: pointer; transition: all .2s; letter-spacing: .05em;
+    }
+    .amount-btn:hover, .amount-btn.active { background: var(--red); border-color: var(--red); }
+
+    .btn-submit {
+      width: 100%; padding: 1rem; margin-top: .5rem;
+      background: var(--red); color: var(--white); border: 2px solid var(--red);
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: .12em;
+      cursor: pointer; transition: background .2s, color .2s;
+    }
+    .btn-submit:hover { background: transparent; color: var(--red); }
+
+    footer { background: var(--black); color: var(--white); border-top: 3px solid var(--red); padding: 4rem 4rem 2rem; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+    .footer-brand p { font-size: .85rem; font-weight: 300; color: #666; line-height: 1.75; margin-top: 1rem; }
+    footer h4 { font-family: 'Oswald', sans-serif; font-size: .7rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--red); margin-bottom: 1rem; }
+    footer ul { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+    footer ul a { text-decoration: none; font-size: .85rem; font-weight: 300; color: #666; transition: color .2s; }
+    footer ul a:hover { color: var(--white); }
+    .footer-bottom { border-top: 1px solid #1a1a1a; padding-top: 1.5rem; display: flex; justify-content: space-between; font-size: .75rem; color: #444; font-family: 'Oswald', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { display: none; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { border-left: none; border-top: 3px solid var(--red); }
+      .how-inner, .donate-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .testi-grid, .materials-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      section { padding: 4rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="logo">FACUS<span>PÚBLICAS</span></a>
+    <ul>
+      <li><a href="#como-funciona">Cómo funciona</a></li>
+      <li><a href="#materiales">Materiales</a></li>
+      <li><a href="#universidades">Universidades</a></li>
+    </ul>
+    <a href="#donar" class="nav-cta">Doná ahora</a>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-left">
+      <div>
+        <h1 class="hero-headline">
+          <span class="red">AYUDA</span> A LAS<br/>
+          <span class="red">FACUS</span> PÚBLICAS
+        </h1>
+
+        <div class="building">
+          <svg viewBox="0 0 300 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="155" width="260" height="8" stroke="#111" stroke-width="2"/>
+            <rect x="30" y="148" width="240" height="7" stroke="#111" stroke-width="1.5"/>
+            <rect x="45" y="141" width="210" height="7" stroke="#111" stroke-width="1.5"/>
+            <rect x="55" y="70" width="190" height="71" stroke="#111" stroke-width="2"/>
+            <polyline points="45,70 150,20 255,70" stroke="#111" stroke-width="2" fill="none"/>
+            <line x1="75"  y1="70" x2="75"  y2="141" stroke="#111" stroke-width="1.5"/>
+            <line x1="100" y1="70" x2="100" y2="141" stroke="#111" stroke-width="1.5"/>
+            <line x1="125" y1="70" x2="125" y2="141" stroke="#111" stroke-width="1.5"/>
+            <line x1="150" y1="70" x2="150" y2="141" stroke="#111" stroke-width="1.5"/>
+            <line x1="175" y1="70" x2="175" y2="141" stroke="#111" stroke-width="1.5"/>
+            <line x1="200" y1="70" x2="200" y2="141" stroke="#111" stroke-width="1.5"/>
+            <line x1="225" y1="70" x2="225" y2="141" stroke="#111" stroke-width="1.5"/>
+            <rect x="130" y="110" width="40" height="31" stroke="#111" stroke-width="1.5"/>
+            <rect x="68"  y="85" width="18" height="20" stroke="#111" stroke-width="1"/>
+            <rect x="93"  y="85" width="18" height="20" stroke="#111" stroke-width="1"/>
+            <rect x="169" y="85" width="18" height="20" stroke="#111" stroke-width="1"/>
+            <rect x="194" y="85" width="18" height="20" stroke="#111" stroke-width="1"/>
+            <line x1="115" y1="48" x2="120" y2="55" stroke="#333" stroke-width=".8"/>
+            <line x1="130" y1="38" x2="138" y2="50" stroke="#333" stroke-width=".8"/>
+            <line x1="148" y1="30" x2="157" y2="44" stroke="#333" stroke-width=".8"/>
+            <line x1="163" y1="35" x2="170" y2="48" stroke="#333" stroke-width=".8"/>
+            <line x1="178" y1="42" x2="183" y2="52" stroke="#333" stroke-width=".8"/>
+          </svg>
+        </div>
+
+        <p class="hero-sub">DONA <span class="red">MATERIALES</span><br/>QUE YA NO USES</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-item"><span class="stat-icon">📉</span><span>Caída del presupuesto del <strong>49%</strong></span></div>
+        <div class="stat-item"><span class="stat-icon">🕐</span><span>Recorte en la carga horaria</span></div>
+        <div class="stat-item"><span class="stat-icon">💸</span><span>Pérdida del <strong>50%</strong> en sueldos desde 2023</span></div>
+        <div class="stat-item"><span class="stat-icon">🎓</span><span>Menos becas disponibles</span></div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <h2>SI SOS EX-ESTUDIANTE Y TENÉS MATERIALES, <span class="red">¡DONALOS!</span></h2>
+      <p>La universidad pública es el motor que nos ayuda a salir adelante en Argentina. Es lo que hace posible que cualquier persona llegue a ser el médico, ingeniero o diseñador de su familia. Cuidarla hoy asegura el futuro del mañana.</p>
+      <div class="qr-row">
+        <div class="qr-box">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" fill="white"/>
+            <rect x="5" y="5" width="30" height="30" fill="none" stroke="#000" stroke-width="4"/>
+            <rect x="13" y="13" width="14" height="14" fill="#000"/>
+            <rect x="65" y="5" width="30" height="30" fill="none" stroke="#000" stroke-width="4"/>
+            <rect x="73" y="13" width="14" height="14" fill="#000"/>
+            <rect x="5" y="65" width="30" height="30" fill="none" stroke="#000" stroke-width="4"/>
+            <rect x="13" y="73" width="14" height="14" fill="#000"/>
+            <rect x="42" y="5"  width="6" height="6"  fill="#000"/>
+            <rect x="52" y="5"  width="6" height="6"  fill="#000"/>
+            <rect x="42" y="15" width="6" height="6"  fill="#000"/>
+            <rect x="52" y="25" width="6" height="6"  fill="#000"/>
+            <rect x="42" y="35" width="6" height="6"  fill="#000"/>
+            <rect x="52" y="35" width="6" height="6"  fill="#000"/>
+            <rect x="42" y="45" width="6" height="6"  fill="#000"/>
+            <rect x="55" y="45" width="6" height="6"  fill="#000"/>
+            <rect x="65" y="45" width="6" height="6"  fill="#000"/>
+            <rect x="75" y="45" width="6" height="6"  fill="#000"/>
+            <rect x="85" y="45" width="6" height="6"  fill="#000"/>
+            <rect x="42" y="55" width="6" height="6"  fill="#000"/>
+            <rect x="52" y="55" width="6" height="6"  fill="#000"/>
+            <rect x="65" y="55" width="6" height="6"  fill="#000"/>
+            <rect x="85" y="55" width="6" height="6"  fill="#000"/>
+            <rect x="42" y="65" width="6" height="6"  fill="#000"/>
+            <rect x="52" y="75" width="6" height="6"  fill="#000"/>
+            <rect x="62" y="65" width="6" height="6"  fill="#000"/>
+            <rect x="72" y="65" width="6" height="6"  fill="#000"/>
+            <rect x="82" y="75" width="6" height="6"  fill="#000"/>
+            <rect x="72" y="85" width="6" height="6"  fill="#000"/>
+            <rect x="5"  y="42" width="6" height="6"  fill="#000"/>
+            <rect x="15" y="42" width="6" height="6"  fill="#000"/>
+            <rect x="25" y="42" width="6" height="6"  fill="#000"/>
+          </svg>
+        </div>
+        <div class="qr-labels">
+          <span class="qr-label"><span class="icon">🙌</span> PARTICIPA Y AYUDA</span>
+          <span class="qr-label"><span class="icon">📷</span> ESCANEÁ EL QR</span>
+          <span class="qr-label"><span class="icon">📸</span> SEGUINOS EN INSTAGRAM</span>
+        </div>
+      </div>
+      <p class="hero-quote">"La educación también es importante"</p>
+    </div>
+  </div>
+
+  <div class="ticker">
+    <div class="ticker-track">
+      <span>UBA</span><span>UNC · Córdoba</span><span>UNLP · La Plata</span>
+      <span>UNR · Rosario</span><span>UNL · Santa Fe</span><span>UNCU · Mendoza</span>
+      <span>UNT · Tucumán</span><span>UNSA · Salta</span><span>UTN</span>
+      <span>UNMDP</span><span>UNNE</span><span>UNQ · Quilmes</span>
+      <span>UBA</span><span>UNC · Córdoba</span><span>UNLP · La Plata</span>
+      <span>UNR · Rosario</span><span>UNL · Santa Fe</span><span>UNCU · Mendoza</span>
+      <span>UNT · Tucumán</span><span>UNSA · Salta</span><span>UTN</span>
+      <span>UNMDP</span><span>UNNE</span><span>UNQ · Quilmes</span>
+    </div>
+  </div>
+
+  <section class="how" id="como-funciona">
+    <div class="how-inner">
+      <div>
+        <span class="section-tag">El proceso</span>
+        <h2 class="section-title">SIMPLE.<br/>DIRECTO.<br/>EFECTIVO.</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">01</span>
+          <div><h3>Registrás tu donación</h3><p>Completás el formulario indicando qué querés donar: libros, equipos, insumos o dinero para compra directa.</p></div>
+        </div>
+        <div class="step">
+          <span class="step-num">02</span>
+          <div><h3>Validamos y asignamos</h3><p>Evaluamos el material y lo asignamos a la universidad con mayor necesidad en esa categoría en ese momento.</p></div>
+        </div>
+        <div class="step">
+          <span class="step-num">03</span>
+          <div><h3>Coordinamos la logística</h3><p>Organizamos retiro o envío sin costo. Trabajamos con operadores logísticos solidarios en todo el país.</p></div>
+        </div>
+        <div class="step">
+          <span class="step-num">04</span>
+          <div><h3>Tu impacto, visible</h3><p>Recibís certificado de donación y foto del material ya en la universidad. Sabés exactamente a dónde llegó.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="materials" id="materiales">
+    <span class="section-tag">¿Qué se puede donar?</span>
+    <h2 class="section-title">MATERIALES QUE TRANSFORMAN AULAS.</h2>
+    <div class="materials-grid">
+      <div class="mat-card"><span class="mat-icon">📚</span><h3>Libros y textos</h3><p>Bibliografía universitaria, enciclopedias y textos técnicos en buen estado.</p><span class="mat-tag">Alta demanda</span></div>
+      <div class="mat-card"><span class="mat-icon">💻</span><h3>Equipos informáticos</h3><p>Computadoras, notebooks, monitores y periféricos funcionales para laboratorios.</p><span class="mat-tag">Urgente</span></div>
+      <div class="mat-card"><span class="mat-icon">🔬</span><h3>Instrumental científico</h3><p>Materiales para química, biología y carreras con componente práctico.</p><span class="mat-tag">Especializado</span></div>
+      <div class="mat-card"><span class="mat-icon">📐</span><h3>Útiles y papelería</h3><p>Resmas, cartuchos, marcadores y todo lo necesario para el trabajo diario.</p><span class="mat-tag">Siempre necesario</span></div>
+      <div class="mat-card"><span class="mat-icon">🎨</span><h3>Materiales artísticos</h3><p>Insumos para diseño, arquitectura y artes visuales.</p><span class="mat-tag">Alta demanda</span></div>
+      <div class="mat-card"><span class="mat-icon">💰</span><h3>Donación monetaria</h3><p>Tu aporte permite comprar exactamente lo que cada universidad necesita.</p><span class="mat-tag">Flexible</span></div>
+    </div>
+  </section>
+
+  <section class="testimonials">
+    <span class="section-tag">Voces reales</span>
+    <h2 class="section-title">LO QUE DICEN QUIENES LO VIVIERON.</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Gracias a los libros donados, nuestra biblioteca pudo actualizar el 40% de la bibliografía obligatoria de ingeniería. La diferencia fue inmediata.</p>
+        <div><p class="testi-name">Marcela Ríos</p><p class="testi-role">Directora de Biblioteca · UNCU</p></div>
+      </div>
+      <div class="testi-card">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Donar fue más fácil de lo que pensaba. En una semana me confirmaron que mis libros de medicina llegaron a Tucumán. Te mandan fotos y todo.</p>
+        <div><p class="testi-name">Esteban Carrizo</p><p class="testi-role">Médico donante · Córdoba</p></div>
+      </div>
+      <div class="testi-card">
+        <span class="testi-quote">"</span>
+        <p class="testi-text">Lo adoptamos para nuestra política de RSE. El proceso es transparente y el impacto, medible. Lo recomendamos a todas las empresas.</p>
+        <div><p class="testi-name">Valentina Torres</p><p class="testi-role">Gerente RSE · TechBA S.A.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="universities" id="universidades">
+    <span class="section-tag">Nuestra red</span>
+    <h2 class="section-title">UNIVERSIDADES BENEFICIADAS.</h2>
+    <div class="uni-grid">
+      <div class="uni-cell">UBA</div><div class="uni-cell">UNC · Córdoba</div>
+      <div class="uni-cell">UNLP · La Plata</div><div class="uni-cell">UNR · Rosario</div>
+      <div class="uni-cell">UNL · Santa Fe</div><div class="uni-cell">UNCU · Mendoza</div>
+      <div class="uni-cell">UNT · Tucumán</div><div class="uni-cell">UNSA · Salta</div>
+      <div class="uni-cell">UTN · Nacional</div><div class="uni-cell">UNMDP · Mar del Plata</div>
+      <div class="uni-cell">UNNE · Corrientes</div><div class="uni-cell">UNQ · Quilmes</div>
+      <div class="uni-cell">UNER · Entre Ríos</div><div class="uni-cell">UNICEN · Tandil</div>
+      <div class="uni-cell">UNJu · Jujuy</div><div class="uni-cell">UNRN · Río Negro</div>
+      <div class="uni-cell">UNLU · Luján</div><div class="uni-cell">UNSJ · San Juan</div>
+      <div class="uni-cell">UNPA · Patagonia</div><div class="uni-cell">+ 15 MÁS →</div>
+    </div>
+  </section>
+
+  <section class="donate" id="donar">
+    <div class="donate-inner">
+      <div>
+        <span class="section-tag">Sumate</span>
+        <h2>TU DONACIÓN LLEGA <span class="red">DIRECTO AL AULA.</span></h2>
+        <p class="lead">Sin intermediarios. Sin burocracia. Cada material va a quien lo necesita, con seguimiento completo y certificado oficial de donación.</p>
+      </div>
+      <div class="form-box">
+        <h3>REGISTRÁ TU DONACIÓN</h3>
+        <div class="form-group"><label>Tu nombre</label><input type="text" placeholder="Ej: Ana García"/></div>
+        <div class="form-group"><label>Correo electrónico</label><input type="email" placeholder="ana@correo.com"/></div>
+        <div class="form-group">
+          <label>Tipo de donación</label>
+          <select>
+            <option>Libros y textos</option>
+            <option>Equipo informático</option>
+            <option>Instrumental científico</option>
+            <option>Útiles y papelería</option>
+            <option>Materiales artísticos</option>
+            <option>Donación monetaria</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Si es monetaria, ¿cuánto?</label>
+          <div class="amount-grid">
+            <button class="amount-btn" onclick="setAmount(this)">$1.000</button>
+            <button class="amount-btn active" onclick="setAmount(this)">$5.000</button>
+            <button class="amount-btn" onclick="setAmount(this)">$10.000</button>
+            <button class="amount-btn" onclick="setAmount(this)">Otro</button>
+          </div>
+        </div>
+        <div class="form-group"><label>Comentarios</label><textarea rows="2" placeholder="Ej: Tengo 20 libros de derecho en buen estado."></textarea></div>
+        <button class="btn-submit">ENVIAR DONACIÓN →</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="logo">FACUS<span>PÚBLICAS</span></a>
+        <p>Conectando generosidad con conocimiento para fortalecer la educación pública argentina desde 2018.</p>
+      </div>
+      <div><h4>Organización</h4><ul><li><a href="#">Quiénes somos</a></li><li><a href="#">Equipo</a></li><li><a href="#">Transparencia</a></li><li><a href="#">Prensa</a></li></ul></div>
+      <div><h4>Donar</h4><ul><li><a href="#">Materiales</a></li><li><a href="#">Dinero</a></li><li><a href="#">Empresas / RSE</a></li><li><a href="#">Certificados</a></li></ul></div>
+      <div><h4>Contacto</h4><ul><li><a href="#">info@facuspublicas.org</a></li><li><a href="#">WhatsApp</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 FACUs Públicas · Todos los derechos reservados</span>
+      <span>Personería jurídica Nº 8234/18 · AFIP exenta</span>
+    </div>
+  </footer>
+
+  <script>
+    function setAmount(btn) {
+      document.querySelectorAll('.amount-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 90);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.step, .mat-card').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
